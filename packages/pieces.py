@@ -53,6 +53,8 @@ class Pawn(Piece):
             self.x += spot_pos[0] - self.x
             if self.collision_detection(pieces):
                 piece = self.collision_detection(pieces)
+                if self.first_turn:
+                    self.first_turn = False
                 return piece
             if self.first_turn:
                 self.first_turn = False
@@ -62,6 +64,8 @@ class Pawn(Piece):
             self.x += spot_pos[0] - self.x
             if self.collision_detection(pieces):
                 piece = self.collision_detection(pieces)
+                if self.first_turn:
+                    self.first_turn = False
                 return piece
             if self.first_turn:
                 self.first_turn = False
@@ -71,8 +75,19 @@ class Pawn(Piece):
         if self.first_turn and self.color == "black":
             self.spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1]))
             self.spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1] * 2))
+            self.spots.append(
+                Spot(self.x + SIZE_OF_BOARD_PIECE[0], self.y + SIZE_OF_BOARD_PIECE[1])
+            )
+            self.spots.append(
+                Spot(self.x - SIZE_OF_BOARD_PIECE[0], self.y + SIZE_OF_BOARD_PIECE[1])
+            )
+            for spot in self.spots[-2:]:
+                if not spot.collision_detection(pieces):
+                    self.spots.remove(spot)
+                elif spot.collision_detection(pieces).color == "black":
+                    self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces):
+                if spot.collision_detection(pieces) and spot is self.spots[0]:
                     self.spots.remove(spot)
 
         elif self.color == "black":
@@ -94,8 +109,19 @@ class Pawn(Piece):
         elif self.first_turn and self.color == "white":
             self.spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1]))
             self.spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1] * 2))
+            self.spots.append(
+                Spot(self.x + SIZE_OF_BOARD_PIECE[0], self.y - SIZE_OF_BOARD_PIECE[1])
+            )
+            self.spots.append(
+                Spot(self.x - SIZE_OF_BOARD_PIECE[0], self.y - SIZE_OF_BOARD_PIECE[1])
+            )
+            for spot in self.spots[-2:]:
+                if not spot.collision_detection(pieces):
+                    self.spots.remove(spot)
+                elif spot.collision_detection(pieces).color == "white":
+                    self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces):
+                if spot.collision_detection(pieces) and spot is self.spots[0]:
                     self.spots.remove(spot)
 
         elif self.color == "white":

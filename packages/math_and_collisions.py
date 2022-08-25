@@ -33,6 +33,26 @@ def clicked_on_piece(piece, pos):
             return True
 
 
+def clicked_on_black_bishop_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Bishop
+        and piece.color == "black"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_white_bishop_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Bishop
+        and piece.color == "white"
+        and spot in piece.spots
+    ):
+        return True
+
+
 def clicked_on_black_rook_spot(spot, piece, pos):
     if (
         clicked_on_piece(spot, pos)

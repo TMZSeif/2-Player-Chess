@@ -97,6 +97,17 @@ def main():
                                     turn = "white"
                                     spots = []
                                     moved = True
+                                elif clicked_on_black_bishop_spot(
+                                    spot, piece, event.pos
+                                ):
+                                    coll_pieces = move_black_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "white"
+                                    spots = []
+                                    moved = True
 
                         if moved:
                             break
@@ -120,6 +131,18 @@ def main():
                                     spots = []
                                     moved = True
                                 elif clicked_on_white_rook_spot(spot, piece, event.pos):
+                                    coll_pieces = move_white_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "black"
+                                    spots = []
+                                    moved = True
+
+                                elif clicked_on_white_bishop_spot(
+                                    spot, piece, event.pos
+                                ):
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )

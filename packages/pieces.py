@@ -50,15 +50,19 @@ class Pawn(Piece):
 
         if self.color == "black":
             self.y += spot_pos[1] - self.y
+            self.x += spot_pos[0] - self.x
             if self.collision_detection(pieces):
-                self.y -= spot_pos[1] - self.y
+                piece = self.collision_detection(pieces)
+                return piece
             if self.first_turn:
                 self.first_turn = False
 
         elif self.color == "white":
             self.y -= self.y - spot_pos[1]
+            self.x += spot_pos[0] - self.x
             if self.collision_detection(pieces):
-                self.y += self.y - spot_pos[1]
+                piece = self.collision_detection(pieces)
+                return piece
             if self.first_turn:
                 self.first_turn = False
 
@@ -73,8 +77,19 @@ class Pawn(Piece):
 
         elif self.color == "black":
             self.spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1]))
+            self.spots.append(
+                Spot(self.x + SIZE_OF_BOARD_PIECE[0], self.y + SIZE_OF_BOARD_PIECE[1])
+            )
+            self.spots.append(
+                Spot(self.x - SIZE_OF_BOARD_PIECE[0], self.y + SIZE_OF_BOARD_PIECE[1])
+            )
+            for spot in self.spots[-2:]:
+                if not spot.collision_detection(pieces):
+                    self.spots.remove(spot)
+                elif spot.collision_detection(pieces).color == "black":
+                    self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces):
+                if spot.collision_detection(pieces) and spot is self.spots[0]:
                     self.spots.remove(spot)
         elif self.first_turn and self.color == "white":
             self.spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1]))
@@ -85,8 +100,19 @@ class Pawn(Piece):
 
         elif self.color == "white":
             self.spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1]))
+            self.spots.append(
+                Spot(self.x + SIZE_OF_BOARD_PIECE[0], self.y - SIZE_OF_BOARD_PIECE[1])
+            )
+            self.spots.append(
+                Spot(self.x - SIZE_OF_BOARD_PIECE[0], self.y - SIZE_OF_BOARD_PIECE[1])
+            )
+            for spot in self.spots[-2:]:
+                if not spot.collision_detection(pieces):
+                    self.spots.remove(spot)
+                elif spot.collision_detection(pieces).color == "white":
+                    self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces):
+                if spot.collision_detection(pieces) and spot is self.spots[0]:
                     self.spots.remove(spot)
         return self.spots
 
@@ -98,6 +124,233 @@ class Bishop(Piece):
             self.piece_img = BLACK_BISHOP
         else:
             self.piece_img = WHITE_BISHOP
+
+    def move(self, pieces, spot_pos):
+
+        if self.color == "black":
+            self.y += spot_pos[1] - self.y
+            self.x += spot_pos[0] - self.x
+            if self.collision_detection(pieces):
+                piece = self.collision_detection(pieces)
+                return piece
+            if self.first_turn:
+                self.first_turn = False
+
+        elif self.color == "white":
+            self.y -= self.y - spot_pos[1]
+            self.x -= self.x - spot_pos[0]
+            if self.collision_detection(pieces):
+                piece = self.collision_detection(pieces)
+                return piece
+            if self.first_turn:
+                self.first_turn = False
+
+    def add_spots_black(self, pieces):
+        run = True
+        line_num = 1
+        dr_spots = []
+        while run:
+            dr_spots.append(
+                Spot(
+                    self.x + SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y + SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in dr_spots:
+                try:
+                    if (
+                        spot.y > HEIGHT
+                        or spot.collision_detection(pieces).color == "black"
+                    ):
+                        dr_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("down collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        ul_spots = []
+        while run:
+            ul_spots.append(
+                Spot(
+                    self.x - SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y - SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in ul_spots:
+                try:
+                    if spot.y < 0 or spot.collision_detection(pieces).color == "black":
+                        ul_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("up collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        ur_spots = []
+        while run:
+            ur_spots.append(
+                Spot(
+                    self.x + SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y - SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in ur_spots:
+                try:
+                    if (
+                        spot.x > WIDTH
+                        or spot.collision_detection(pieces).color == "black"
+                    ):
+                        ur_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("right collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        dl_spots = []
+        while run:
+            dl_spots.append(
+                Spot(
+                    self.x - SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y + SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in dl_spots:
+                try:
+                    if spot.x < 0 or spot.collision_detection(pieces).color == "black":
+                        dl_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        run = False
+            line_num += 1
+        self.spots = ul_spots + dr_spots + ur_spots + dl_spots
+
+    def add_spots_white(self, pieces):
+        run = True
+        line_num = 1
+        dr_spots = []
+        while run:
+            dr_spots.append(
+                Spot(
+                    self.x + SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y + SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in dr_spots:
+                try:
+                    if (
+                        spot.y > HEIGHT
+                        or spot.collision_detection(pieces).color == "white"
+                    ):
+                        dr_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("down collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        ul_spots = []
+        while run:
+            ul_spots.append(
+                Spot(
+                    self.x - SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y - SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in ul_spots:
+                try:
+                    if spot.y < 0 or spot.collision_detection(pieces).color == "white":
+                        ul_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("up collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        ur_spots = []
+        while run:
+            ur_spots.append(
+                Spot(
+                    self.x + SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y - SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in ur_spots:
+                try:
+                    if (
+                        spot.x > WIDTH
+                        or spot.collision_detection(pieces).color == "white"
+                    ):
+                        ur_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        print("right collision")
+                        run = False
+            line_num += 1
+        run = True
+        line_num = 1
+        dl_spots = []
+        while run:
+            dl_spots.append(
+                Spot(
+                    self.x - SIZE_OF_BOARD_PIECE[0] * line_num,
+                    self.y + SIZE_OF_BOARD_PIECE[1] * line_num,
+                )
+            )
+            for spot in dl_spots:
+                try:
+                    if spot.x < 0 or spot.collision_detection(pieces).color == "white":
+                        dl_spots.remove(spot)
+                        run = False
+                    if spot.collision_detection(pieces):
+                        run = False
+                except AttributeError:
+                    if spot.collision_detection(pieces):
+                        run = False
+            line_num += 1
+        self.spots = ul_spots + dr_spots + ur_spots + dl_spots
+
+    def show_positions(self, pieces):
+        self.spots = []
+        if self.color == "black":
+            self.add_spots_black(pieces)
+
+        elif self.color == "white":
+            self.add_spots_white(pieces)
+        return self.spots
 
 
 class Knight(Piece):
@@ -149,16 +402,16 @@ class Rook(Piece):
     def add_spots_white(self, pieces):
         run = True
         line_num = 1
-        d_spots = []
+        dr_spots = []
         while run:
-            d_spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1] * line_num))
-            for spot in d_spots:
+            dr_spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1] * line_num))
+            for spot in dr_spots:
                 try:
                     if (
                         spot.y > HEIGHT
                         or spot.collision_detection(pieces).color == "white"
                     ):
-                        d_spots.remove(spot)
+                        dr_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -168,13 +421,13 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        u_spots = []
+        ul_spots = []
         while run:
-            u_spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1] * line_num))
-            for spot in u_spots:
+            ul_spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1] * line_num))
+            for spot in ul_spots:
                 try:
                     if spot.y < 0 or spot.collision_detection(pieces).color == "white":
-                        u_spots.remove(spot)
+                        ul_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -184,16 +437,16 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        r_spots = []
+        ur_spots = []
         while run:
-            r_spots.append(Spot(self.x + SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
-            for spot in r_spots:
+            ur_spots.append(Spot(self.x + SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
+            for spot in ur_spots:
                 try:
                     if (
                         spot.x > WIDTH
                         or spot.collision_detection(pieces).color == "white"
                     ):
-                        r_spots.remove(spot)
+                        ur_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -203,13 +456,13 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        l_spots = []
+        dl_spots = []
         while run:
-            l_spots.append(Spot(self.x - SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
-            for spot in l_spots:
+            dl_spots.append(Spot(self.x - SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
+            for spot in dl_spots:
                 try:
                     if spot.x < 0 or spot.collision_detection(pieces).color == "white":
-                        l_spots.remove(spot)
+                        dl_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -217,21 +470,21 @@ class Rook(Piece):
                     if spot.collision_detection(pieces):
                         run = False
             line_num += 1
-        self.spots = u_spots + d_spots + l_spots + r_spots
+        self.spots = ul_spots + dr_spots + dl_spots + ur_spots
 
     def add_spots_black(self, pieces):
         run = True
         line_num = 1
-        d_spots = []
+        dr_spots = []
         while run:
-            d_spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1] * line_num))
-            for spot in d_spots:
+            dr_spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1] * line_num))
+            for spot in dr_spots:
                 try:
                     if (
                         spot.y > HEIGHT
                         or spot.collision_detection(pieces).color == "black"
                     ):
-                        d_spots.remove(spot)
+                        dr_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -243,13 +496,13 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        u_spots = []
+        ul_spots = []
         while run:
-            u_spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1] * line_num))
-            for spot in u_spots:
+            ul_spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1] * line_num))
+            for spot in ul_spots:
                 try:
                     if spot.y < 0 or spot.collision_detection(pieces).color == "black":
-                        u_spots.remove(spot)
+                        ul_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -261,16 +514,16 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        r_spots = []
+        ur_spots = []
         while run:
-            r_spots.append(Spot(self.x + SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
-            for spot in r_spots:
+            ur_spots.append(Spot(self.x + SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
+            for spot in ur_spots:
                 try:
                     if (
                         spot.x > WIDTH
                         or spot.collision_detection(pieces).color == "black"
                     ):
-                        r_spots.remove(spot)
+                        ur_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -282,13 +535,13 @@ class Rook(Piece):
             line_num += 1
         run = True
         line_num = 1
-        l_spots = []
+        dl_spots = []
         while run:
-            l_spots.append(Spot(self.x - SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
-            for spot in l_spots:
+            dl_spots.append(Spot(self.x - SIZE_OF_BOARD_PIECE[0] * line_num, self.y))
+            for spot in dl_spots:
                 try:
                     if spot.x < 0 or spot.collision_detection(pieces).color == "black":
-                        l_spots.remove(spot)
+                        dl_spots.remove(spot)
                         run = False
                     if spot.collision_detection(pieces):
                         run = False
@@ -296,7 +549,7 @@ class Rook(Piece):
                     if spot.collision_detection(pieces):
                         run = False
             line_num += 1
-        self.spots = u_spots + d_spots + r_spots + l_spots
+        self.spots = ul_spots + dr_spots + ur_spots + dl_spots
 
     def show_positions(self, pieces):
         self.spots = []

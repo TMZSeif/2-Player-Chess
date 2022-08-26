@@ -33,6 +33,66 @@ def clicked_on_piece(piece, pos):
             return True
 
 
+def clicked_on_black_king_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == King
+        and piece.color == "black"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_white_king_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == King
+        and piece.color == "white"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_black_knight_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Knight
+        and piece.color == "black"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_white_knight_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Knight
+        and piece.color == "white"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_black_queen_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Queen
+        and piece.color == "black"
+        and spot in piece.spots
+    ):
+        return True
+
+
+def clicked_on_white_queen_spot(spot, piece, pos):
+    if (
+        clicked_on_piece(spot, pos)
+        and type(piece) == Queen
+        and piece.color == "white"
+        and spot in piece.spots
+    ):
+        return True
+
+
 def clicked_on_black_bishop_spot(spot, piece, pos):
     if (
         clicked_on_piece(spot, pos)

@@ -79,6 +79,36 @@ def main():
                     for piece in pieces:
                         for spot in spots:
                             if clicked_on_piece(spot, event.pos):
+                                if clicked_on_black_king_spot(spot, piece, event.pos):
+                                    coll_pieces = move_black_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "white"
+                                    spots = []
+                                    moved = True
+
+                                if clicked_on_black_knight_spot(spot, piece, event.pos):
+                                    coll_pieces = move_black_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "white"
+                                    spots = []
+                                    moved = True
+
+                                if clicked_on_black_queen_spot(spot, piece, event.pos):
+                                    coll_pieces = move_black_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "white"
+                                    spots = []
+                                    moved = True
+
                                 if clicked_on_black_pawn_spot(spot, piece, event.pos):
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
@@ -88,6 +118,7 @@ def main():
                                     turn = "white"
                                     spots = []
                                     moved = True
+
                                 elif clicked_on_black_rook_spot(spot, piece, event.pos):
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
@@ -97,6 +128,7 @@ def main():
                                     turn = "white"
                                     spots = []
                                     moved = True
+
                                 elif clicked_on_black_bishop_spot(
                                     spot, piece, event.pos
                                 ):
@@ -121,6 +153,36 @@ def main():
                     for piece in pieces:
                         for spot in spots:
                             if clicked_on_piece(spot, event.pos):
+                                if clicked_on_white_king_spot(spot, piece, event.pos):
+                                    coll_pieces = move_white_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "black"
+                                    spots = []
+                                    moved = True
+
+                                if clicked_on_white_knight_spot(spot, piece, event.pos):
+                                    coll_pieces = move_white_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "black"
+                                    spots = []
+                                    moved = True
+
+                                if clicked_on_white_queen_spot(spot, piece, event.pos):
+                                    coll_pieces = move_white_piece(
+                                        piece, pieces, (spot.x, spot.y)
+                                    )
+                                    if type(coll_pieces) == List:
+                                        pieces = coll_pieces
+                                    turn = "black"
+                                    spots = []
+                                    moved = True
+
                                 if clicked_on_white_pawn_spot(spot, piece, event.pos):
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
@@ -130,6 +192,7 @@ def main():
                                     turn = "black"
                                     spots = []
                                     moved = True
+
                                 elif clicked_on_white_rook_spot(spot, piece, event.pos):
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)

@@ -1,3 +1,4 @@
+from calendar import c
 from typing import List
 import pygame
 from packages.constants import *
@@ -61,7 +62,40 @@ def move_white_piece(piece, coll_pieces, pos):
         return True
 
 
+def check(king, pieces):
+    if not king or not pieces:
+        return
+    for piece in pieces:
+        spots = piece.show_positions(pieces)
+        for spot in spots:
+            if spot.collision_detection([king]):
+                return True
+
+
+def check_for_black_check(kings, pieces):
+    carry = kings
+    kings = filter(lambda king: king.color == "black", kings)
+    king = None
+    for x_king in kings:
+        king = x_king
+    b_check = check(king, pieces)
+    kings = carry
+    return b_check
+
+
+def check_for_white_check(kings, pieces):
+    carry = kings
+    kings = filter(lambda king: king.color == "white", kings)
+    king = None
+    for x_king in kings:
+        king = x_king
+    w_check = check(king, pieces)
+    kings = carry
+    return w_check
+
+
 def main():
+    global BLACK_KING
     run = True
     clock = pygame.time.Clock()
     pieces = initialize_white_pieces()
@@ -69,6 +103,9 @@ def main():
     pawns, rooks, knights, bishops, kings, queens = separate_pieces(pieces)
     turn = "black"
     spots = []
+    b_check = False
+    w_check = False
+    changed = False
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -83,6 +120,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -93,6 +132,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -103,6 +144,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -113,6 +156,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -123,6 +168,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -135,6 +182,8 @@ def main():
                                     coll_pieces = move_black_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -157,6 +206,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -167,6 +218,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -177,6 +230,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -187,8 +242,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
-                                    if type(coll_pieces) == List:
-                                        pieces = coll_pieces
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     turn = "black"
                                     spots = []
                                     moved = True
@@ -197,6 +252,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -209,6 +266,8 @@ def main():
                                     coll_pieces = move_white_piece(
                                         piece, pieces, (spot.x, spot.y)
                                     )
+                                    b_check = check_for_black_check(kings, pieces)
+                                    w_check = check_for_white_check(kings, pieces)
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -220,9 +279,14 @@ def main():
                             spots = show_white_positions(piece, pieces, event.pos)
                             if not spots:
                                 spots = []
-
+        if b_check:
+            changed = True
+            kings[1].piece_img = pygame.transform.scale(BLACK_KING, (63, 63))
         moved = False
         draw_window(pieces, WIN, spots)
+        if changed:
+            kings[1].piece_img = pygame.transform.scale(BLACK_KING, (60, 60))
+            draw_window(pieces, WIN, spots)
 
 
 if __name__ == "__main__":

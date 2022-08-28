@@ -7,7 +7,7 @@ WIDTH, HEIGHT = 800, 600
 
 SIZE_OF_BOARD_PIECE = (100, 75)
 
-FPS = 60
+FPS = 90
 
 BOARD_IMG = pygame.image.load(os.path.join("Assets", "Chess_Board.svg"))
 BOARD = pygame.transform.scale(BOARD_IMG, (WIDTH, HEIGHT))

@@ -85,8 +85,12 @@ class Pawn(Piece):
                 elif spot.collision_detection(pieces).color == "black":
                     self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces) and spot is self.spots[0]:
-                    self.spots.remove(spot)
+                if spot.collision_detection(pieces):
+                    if spot is self.spots[0]:
+                        self.spots.remove(spot)
+                        self.spots.remove(self.spots[0])
+                    else:
+                        self.spots.remove(spot)
 
         elif self.color == "black":
             self.spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1]))
@@ -119,8 +123,12 @@ class Pawn(Piece):
                 elif spot.collision_detection(pieces).color == "white":
                     self.spots.remove(spot)
             for spot in self.spots:
-                if spot.collision_detection(pieces) and spot is self.spots[0]:
-                    self.spots.remove(spot)
+                if spot.collision_detection(pieces):
+                    if spot is self.spots[0]:
+                        self.spots.remove(spot)
+                        self.spots.remove(self.spots[0])
+                    else:
+                        self.spots.remove(spot)
 
         elif self.color == "white":
             self.spots.append(Spot(self.x, self.y - SIZE_OF_BOARD_PIECE[1]))

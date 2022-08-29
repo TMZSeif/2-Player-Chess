@@ -6,9 +6,6 @@ from packages.pieces import *
 from packages.math_and_collisions import *
 
 
-pygame.display.set_caption("2 Player Chess")
-
-
 def draw_window(pieces, window, spots):
     window.blit(BOARD, (0, 0))
     for piece in pieces:
@@ -28,6 +25,7 @@ def draw_window(pieces, window, spots):
             spot.img,
             (spot.x + spot.img.get_height() / 2, spot.y + spot.img.get_height() / 2),
         )
+
     pygame.display.update()
 
 
@@ -69,7 +67,43 @@ def check(king, pieces):
         spots = piece.show_positions(pieces)
         for spot in spots:
             if spot.collision_detection([king]):
-                return True
+                return piece
+
+
+def checkmate(king, pieces, color):
+    def no_moves():
+        spots = king.show_positions(pieces)
+        for spot in spots:
+            s_king = King(spot.x, spot.y, color)
+            if not check(s_king, pieces):
+                print(s_king)
+                return False
+        return True
+
+    if check(king, pieces) and no_moves():
+        return True
+
+
+def check_for_black_checkmate(kings, pieces):
+    carry = kings
+    kings = filter(lambda king: king.color == "black", kings)
+    king = None
+    for x_king in kings:
+        king = x_king
+    b_check = checkmate(king, pieces, "black")
+    kings = carry
+    return b_check
+
+
+def check_for_white_checkmate(kings, pieces):
+    carry = kings
+    kings = filter(lambda king: king.color == "white", kings)
+    king = None
+    for x_king in kings:
+        king = x_king
+    w_check = checkmate(king, pieces, "white")
+    kings = carry
+    return w_check
 
 
 def check_for_black_check(kings, pieces):
@@ -94,8 +128,57 @@ def check_for_white_check(kings, pieces):
     return w_check
 
 
+def draw_black_win(window, pieces):
+    window.blit(BOARD, (0, 0))
+    for piece in pieces:
+        piece.draw(window)
+        pygame.draw.rect(
+            window,
+            (255, 0, 0),
+            (
+                piece.x + piece.piece_img.get_width() / 2,
+                piece.y + piece.piece_img.get_height() / 2,
+                10,
+                10,
+            ),
+        )
+    txt = WIN_FONT.render("Black Wins!", 1, (125, 125, 125))
+    window.blit(
+        txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2)
+    )
+    txt = WIN_FONT.render("Press Enter To Restart.", 1, (125, 125, 125))
+    window.blit(
+        txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2 - 70)
+    )
+    pygame.display.update()
+
+
+def draw_white_win(window, pieces):
+    window.blit(BOARD, (0, 0))
+    for piece in pieces:
+        piece.draw(window)
+        pygame.draw.rect(
+            window,
+            (255, 0, 0),
+            (
+                piece.x + piece.piece_img.get_width() / 2,
+                piece.y + piece.piece_img.get_height() / 2,
+                10,
+                10,
+            ),
+        )
+    txt = WIN_FONT.render("White Wins!", 1, (125, 125, 125))
+    window.blit(
+        txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2)
+    )
+    txt = WIN_FONT.render("Press Enter To Restart.", 1, (125, 125, 125))
+    window.blit(
+        txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2 - 70)
+    )
+    pygame.display.update()
+
+
 def main():
-    global BLACK_KING
     run = True
     clock = pygame.time.Clock()
     pieces = initialize_white_pieces()
@@ -105,6 +188,8 @@ def main():
     spots = []
     b_check = False
     w_check = False
+    b_checkmate = False
+    w_checkmate = False
     changed = False
     while run:
         clock.tick(FPS)
@@ -122,6 +207,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -134,6 +225,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -146,6 +243,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -158,6 +261,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -170,6 +279,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -184,6 +299,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "white"
@@ -208,6 +329,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -220,6 +347,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -232,6 +365,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -244,6 +383,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     turn = "black"
                                     spots = []
                                     moved = True
@@ -254,6 +399,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -268,6 +419,12 @@ def main():
                                     )
                                     b_check = check_for_black_check(kings, pieces)
                                     w_check = check_for_white_check(kings, pieces)
+                                    b_checkmate = check_for_black_checkmate(
+                                        kings, pieces
+                                    )
+                                    w_checkmate = check_for_white_checkmate(
+                                        kings, pieces
+                                    )
                                     if type(coll_pieces) == List:
                                         pieces = coll_pieces
                                     turn = "black"
@@ -279,13 +436,30 @@ def main():
                             spots = show_white_positions(piece, pieces, event.pos)
                             if not spots:
                                 spots = []
+        if w_checkmate:
+            draw_white_win(WIN, pieces)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RETURN]:
+                main()
+            continue
+        if b_checkmate:
+            draw_black_win(WIN, pieces)
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_RETURN]:
+                main()
+            continue
         if b_check:
             changed = True
             kings[1].piece_img = pygame.transform.scale(BLACK_KING, (63, 63))
+        elif w_check:
+            changed = True
+            kings[0].piece_img = pygame.transform.scale(WHITE_KING, (63, 63))
+
         moved = False
         draw_window(pieces, WIN, spots)
         if changed:
             kings[1].piece_img = pygame.transform.scale(BLACK_KING, (60, 60))
+            kings[0].piece_img = pygame.transform.scale(WHITE_KING, (60, 60))
             draw_window(pieces, WIN, spots)
 
 

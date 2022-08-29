@@ -1,6 +1,8 @@
 import pygame
 import os
 
+pygame.font.init()
+
 # CONSTANTS
 
 WIDTH, HEIGHT = 800, 600
@@ -9,6 +11,7 @@ SIZE_OF_BOARD_PIECE = (100, 75)
 
 FPS = 90
 
+WIN_FONT = pygame.font.SysFont("consolas", 60)
 BOARD_IMG = pygame.image.load(os.path.join("Assets", "Chess_Board.svg"))
 BOARD = pygame.transform.scale(BOARD_IMG, (WIDTH, HEIGHT))
 BLACK_PAWN = pygame.image.load(os.path.join("Assets", "black_pawn.png"))
@@ -26,3 +29,4 @@ WHITE_KNIGHT = pygame.image.load(os.path.join("Assets", "white_knight.png"))
 SPOT = pygame.image.load(os.path.join("Assets", "spot.png"))
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT), vsync=1)
+pygame.display.set_caption("2 Player Chess")

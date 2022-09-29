@@ -111,18 +111,24 @@ def check(king, pieces, w_pieces):
                 return piece
 
 
-def checkmate(king, pieces, color):
+def checkmate(king, pieces, w_pieces, color):
+    if not check(king, pieces, w_pieces):
+        return False
+
     def no_moves():
         spots = king.show_positions(pieces)
+        k_x, k_y = king.x, king.y
         for spot in spots:
-            s_king = King(spot.x, spot.y, color)
-            if not check(s_king, pieces, pieces):
-                print(s_king)
-            return False
+            king.x, king.y = spot.x, spot.y
+            if not check(king, pieces, w_pieces):
+                print(king)
+                king.x, king.y = k_x, k_y
+                return False
+        king.x, king.y = k_x, k_y
         return True
 
     def can_be_blocked():
-        check_piece = check(king, pieces, pieces)
+        check_piece = check(king, pieces, w_pieces)
         check_spots = check_piece.show_positions(pieces)
         for piece in pieces:
             if piece is check_piece:
@@ -133,33 +139,43 @@ def checkmate(king, pieces, color):
                     if spot.x == check_spot.x and spot.y == check_spot.y:
                         p_x, p_y = piece.x, piece.y
                         piece.x, piece.y = spot.x, spot.y
-                        if not check(king, [piece], pieces):
+                        if not check(king, pieces, w_pieces):
                             piece.x, piece.y = p_x, p_y
                             return True
-                            
-        if check(king, pieces, pieces) and no_moves() and not can_be_blocked():
-            return True
+                        piece.x, piece.y = p_x, p_y
+
+    print(check(king, pieces, w_pieces), no_moves(), can_be_blocked())
+    if check(king, pieces, w_pieces) and no_moves() and not can_be_blocked():
+        return True
 
 
 def check_for_black_checkmate(kings, pieces):
     carry = kings
+    carry_p = pieces
     kings = filter(lambda king: king.color == "black", kings)
     king = None
+    pieces = filter(lambda piece: piece.color == "white", pieces)
     for x_king in kings:
         king = x_king
-    b_check = checkmate(king, pieces, "black")
+    pieces = list(pieces)
+    b_check = checkmate(king, carry_p, pieces, "black")
     kings = carry
+    pieces = carry_p
     return b_check
 
 
 def check_for_white_checkmate(kings, pieces):
     carry = kings
+    carry_p = pieces
     kings = filter(lambda king: king.color == "white", kings)
     king = None
+    pieces = filter(lambda piece: piece.color == "black", pieces)
     for x_king in kings:
         king = x_king
-    w_check = checkmate(king, pieces, "white")
+    pieces = list(pieces)
+    w_check = checkmate(king, carry_p, pieces, "white")
     kings = carry
+    pieces = carry_p
     return w_check
 
 
@@ -207,7 +223,7 @@ def draw_black_win(window, pieces):
                 10,
             ),
         )
-    txt = WIN_FONT.render("Black Wins!", 1, (125, 125, 125))
+    txt = WIN_FONT.render("White Wins!", 1, (125, 125, 125))
     window.blit(
         txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2)
     )
@@ -232,7 +248,7 @@ def draw_white_win(window, pieces):
                 10,
             ),
         )
-    txt = WIN_FONT.render("White Wins!", 1, (125, 125, 125))
+    txt = WIN_FONT.render("Black Wins!", 1, (125, 125, 125))
     window.blit(
         txt, (WIDTH / 2 - txt.get_width() / 2, HEIGHT / 2 - txt.get_height() / 2)
     )

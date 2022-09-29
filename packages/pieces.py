@@ -519,7 +519,10 @@ class Knight(Piece):
                 if not spot.collision_detection(pieces):
                     continue
                 if spot.collision_detection(pieces).color == "white":
-                    self.spots.remove(spot)
+                    try:
+                        self.spots.remove(spot)
+                    except ValueError:
+                        break
 
         return self.spots
 
@@ -1416,7 +1419,10 @@ class King(Piece):
                 if not spot.collision_detection(pieces):
                     continue
                 if spot.collision_detection(pieces).color == "black":
-                    self.spots.remove(spot)
+                    try:
+                        self.spots.remove(spot)
+                    except ValueError:
+                        break
 
         elif self.color == "white":
             spots.append(Spot(self.x, self.y + SIZE_OF_BOARD_PIECE[1]))

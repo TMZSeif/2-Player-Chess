@@ -38,16 +38,57 @@ def move_black_piece(piece, coll_pieces, pos):
         return True
 
 
-def show_black_positions(piece, coll_pieces, pos):
+def show_black_positions(piece, coll_pieces, pos, king):
     if piece.color == "black" and clicked_on_piece(piece, pos):
         spots = piece.show_positions(coll_pieces)
-
+        c_spots = spots[:]
+        piece_is_king_piece = piece == king
+        for spot in c_spots:
+            p_x, p_y = piece.x, piece.y
+            piece.x, piece.y = spot.x, spot.y
+            if check_for_black_check([king], coll_pieces):
+                if not piece_is_king_piece:
+                    attack_piece = check_for_black_check([king], coll_pieces)
+                else:
+                    attack_piece = check_for_black_check([piece], coll_pieces)
+                a_spots = attack_piece.show_positions(coll_pieces)
+                if piece_is_king_piece:
+                    print(piece.x, piece.y)
+                    print(attack_piece.x, attack_piece.y)
+                    print(attack_piece)
+                if piece.x == attack_piece.x and piece.y == attack_piece.y:
+                    piece.x, piece.y = p_x, p_y
+                    continue
+                try:
+                    # if piece_is_king_piece:
+                    # print(spot.x, spot.y)
+                    spots.remove(spot)
+                except ValueError:
+                    piece.x, piece.y = p_x, p_y
+                    continue
+            piece.x, piece.y = p_x, p_y
+        piece.spots = spots
         return spots
 
 
-def show_white_positions(piece, coll_pieces, pos):
+def show_white_positions(piece, coll_pieces, pos, king):
     if piece.color == "white" and clicked_on_piece(piece, pos):
         spots = piece.show_positions(coll_pieces)
+        c_spots = spots[:]
+        for spot in c_spots:
+            p_x, p_y = piece.x, piece.y
+            piece.x, piece.y = spot.x, spot.y
+            if check_for_white_check([king], coll_pieces):
+                attack_piece = check_for_white_check([king], coll_pieces)
+                a_spots = attack_piece.show_positions(coll_pieces)
+                for a_spot in a_spots:
+                    if piece.x != a_spot.x and piece.y != a_spot.y:
+                        try:
+                            spots.remove(spot)
+                        except ValueError:
+                            break
+            piece.x, piece.y = p_x, p_y
+        piece.spots = spots
         return spots
 
 
@@ -60,10 +101,10 @@ def move_white_piece(piece, coll_pieces, pos):
         return True
 
 
-def check(king, pieces):
+def check(king, pieces, w_pieces):
     if not king or not pieces:
         return
-    for piece in pieces:
+    for piece in w_pieces:
         spots = piece.show_positions(pieces)
         for spot in spots:
             if spot.collision_detection([king]):
@@ -75,13 +116,29 @@ def checkmate(king, pieces, color):
         spots = king.show_positions(pieces)
         for spot in spots:
             s_king = King(spot.x, spot.y, color)
-            if not check(s_king, pieces):
+            if not check(s_king, pieces, pieces):
                 print(s_king)
-                return False
+            return False
         return True
 
-    if check(king, pieces) and no_moves():
-        return True
+    def can_be_blocked():
+        check_piece = check(king, pieces, pieces)
+        check_spots = check_piece.show_positions(pieces)
+        for piece in pieces:
+            if piece is check_piece:
+                continue
+            spots = piece.show_positions(pieces)
+            for check_spot in check_spots:
+                for spot in spots:
+                    if spot.x == check_spot.x and spot.y == check_spot.y:
+                        p_x, p_y = piece.x, piece.y
+                        piece.x, piece.y = spot.x, spot.y
+                        if not check(king, [piece], pieces):
+                            piece.x, piece.y = p_x, p_y
+                            return True
+                            
+        if check(king, pieces, pieces) and no_moves() and not can_be_blocked():
+            return True
 
 
 def check_for_black_checkmate(kings, pieces):
@@ -108,23 +165,31 @@ def check_for_white_checkmate(kings, pieces):
 
 def check_for_black_check(kings, pieces):
     carry = kings
+    carry_p = pieces
     kings = filter(lambda king: king.color == "black", kings)
     king = None
+    pieces = filter(lambda piece: piece.color == "white", pieces)
     for x_king in kings:
         king = x_king
-    b_check = check(king, pieces)
+    pieces = list(pieces)
+    b_check = check(king, carry_p, pieces)
     kings = carry
+    pieces = carry_p
     return b_check
 
 
 def check_for_white_check(kings, pieces):
     carry = kings
+    carry_p = pieces
     kings = filter(lambda king: king.color == "white", kings)
     king = None
+    pieces = filter(lambda piece: piece.color == "black", pieces)
     for x_king in kings:
         king = x_king
-    w_check = check(king, pieces)
+    pieces = list(pieces)
+    w_check = check(king, carry_p, pieces)
     kings = carry
+    pieces = carry_p
     return w_check
 
 
@@ -316,7 +381,9 @@ def main():
                         if clicked_on_piece(
                             piece, event.pos
                         ) and not piece.collision_detection(spots):
-                            spots = show_black_positions(piece, pieces, event.pos)
+                            spots = show_black_positions(
+                                piece, pieces, event.pos, kings[1]
+                            )
                             if not spots:
                                 spots = []
                 else:
@@ -433,7 +500,9 @@ def main():
                         if moved:
                             break
                         if clicked_on_piece(piece, event.pos):
-                            spots = show_white_positions(piece, pieces, event.pos)
+                            spots = show_white_positions(
+                                piece, pieces, event.pos, kings[0]
+                            )
                             if not spots:
                                 spots = []
         if w_checkmate:

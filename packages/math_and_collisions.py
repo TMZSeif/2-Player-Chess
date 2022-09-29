@@ -134,13 +134,13 @@ def clicked_on_white_rook_spot(spot, piece, pos):
 
 
 def clicked_on_black_pawn_spot(spot, piece, pos):
+    #
     if (
         clicked_on_piece(spot, pos)
         and type(piece) == Pawn
         and piece.color == "black"
         and spot in piece.spots
     ):
-
         return True
 
 

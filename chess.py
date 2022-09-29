@@ -10,16 +10,7 @@ def draw_window(pieces, window, spots):
     window.blit(BOARD, (0, 0))
     for piece in pieces:
         piece.draw(window)
-        pygame.draw.rect(
-            window,
-            (255, 0, 0),
-            (
-                piece.x + piece.piece_img.get_width() / 2,
-                piece.y + piece.piece_img.get_height() / 2,
-                10,
-                10,
-            ),
-        )
+
     for spot in spots:
         window.blit(
             spot.img,
